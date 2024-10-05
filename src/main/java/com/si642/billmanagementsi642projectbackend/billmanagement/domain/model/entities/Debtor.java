@@ -12,6 +12,4 @@ import lombok.Setter;
 public class Debtor extends Profile {
     @Id
     private Long id;
-
-
 }
