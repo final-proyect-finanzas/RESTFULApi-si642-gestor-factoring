@@ -9,6 +9,7 @@ import com.si642.billmanagementsi642projectbackend.iam.domain.model.queries.GetU
 import com.si642.billmanagementsi642projectbackend.iam.domain.services.UserCommandService;
 import com.si642.billmanagementsi642projectbackend.iam.domain.services.UserQueryService;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * </p>
  *
  */
+@Service
 public class IamContextFacade {
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;

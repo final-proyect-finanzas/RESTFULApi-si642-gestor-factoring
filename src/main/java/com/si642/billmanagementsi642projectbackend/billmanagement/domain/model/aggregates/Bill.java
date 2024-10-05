@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
+/**
+ * Bill aggregate root
+ * Represents a bill - Representa una letra o factura
+ */
 @NoArgsConstructor
 @Entity
 @Getter
