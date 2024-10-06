@@ -14,7 +14,11 @@ public record CreateBillCommand(
         Date discountDate,
         BigDecimal amount,
         Currency currency,
-        Debtor debtor,
-        Portfolio portfolio
+        Long debtorId,
+        Long portfolioId,
+        Long bankId,
+        Long companyId,
+        BigDecimal initialCosts,
+        BigDecimal finalCosts
 ) {
 }
