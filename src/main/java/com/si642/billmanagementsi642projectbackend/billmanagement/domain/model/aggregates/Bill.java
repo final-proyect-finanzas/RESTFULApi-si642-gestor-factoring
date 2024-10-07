@@ -112,6 +112,8 @@ public class Bill {
     private void calculateDrate() {
         if(this.bank.getTypeRate() == TypeRate.TNA) {
             this.netValue = this.netValue.multiply(BigDecimal.valueOf(this.bank.getRate()));
+        }else{
+            this.netValue = this.netValue.multiply(this.convertTNtoTE(BigDecimal.valueOf(this.bank.getRate())));
         }
     }
 
@@ -120,10 +122,17 @@ public class Bill {
      * TE = (1 + TN/m)^n - 1
      * m = Period that capitalization is of the TN
      * n = Period that capitalization is of the TE
+     * Bank have this data:
+     * TN = 20.0 %
+     * Capitalization = DAILY 360
+     * n = if the TE is same to m in this case
+     * TE = (1 + 20.0/360)^360 - 1 * 100 = 22.13%
      */
-    //TODO: Review this formulas
-    private BigDecimal convertTNtoTE(BigDecimal TE) {
-        return BigDecimal.valueOf((Math.pow(1 + this.bank.getRate() / this.bank.getDaysRate(), this.bank.getDaysRate()) - 1)*100);
+    public BigDecimal convertTNtoTE(BigDecimal TN) {
+        double rate = TN.doubleValue() / 100;
+        int period = this.bank.getCapitalization().getPeriod();
+        double result = Math.pow(1 + rate / period, period) - 1;
+        return BigDecimal.valueOf(result * 100);
     }
 
 
