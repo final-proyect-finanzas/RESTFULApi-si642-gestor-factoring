@@ -79,7 +79,7 @@ public class Bill {
     @JoinColumn(name = "debtor_id")
     private Debtor debtor;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
 

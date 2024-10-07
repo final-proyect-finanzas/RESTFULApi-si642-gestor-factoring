@@ -1,5 +1,6 @@
 package com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.controllers;
 
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.queries.GetBillsByPortfolioId;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BillCommandService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BillQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.resources.BillResource;
@@ -8,10 +9,10 @@ import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.res
 import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.transform.CreateBillCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/v1/bills", produces = "application/json")
@@ -35,4 +36,17 @@ public class BillController {
         var billResource = BillResourceFromEntityAssembler.toResourceFromEntity(bill.get());
         return ResponseEntity.ok(billResource);
     }
+
+    @GetMapping("/getByPortfolioId/{portfolioId}")
+    ResponseEntity<List<BillResource>> getBillsByPortfolioId(@PathVariable Long portfolioId) {
+        var bills = billQueryService.handle(new GetBillsByPortfolioId(portfolioId));
+        if (bills.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var billsResponse = bills.get().stream()
+                .map(BillResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(billsResponse);
+    }
+
 }
