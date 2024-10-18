@@ -18,7 +18,8 @@ public class BillResourceFromEntityAssembler {
                 bill.getNetValue(),
                 bill.getBank(),
                 bill.getDebtor().getProfile().getName(),
-                bill.getPortfolio().getCompany().getProfile().getName()
+                bill.getPortfolio().getCompany().getProfile().getName(),
+                bill.getDaysToDiscount()
         );
     }
 }

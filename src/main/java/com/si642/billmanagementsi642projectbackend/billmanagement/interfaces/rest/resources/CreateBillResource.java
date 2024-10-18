@@ -14,6 +14,7 @@ public record CreateBillResource(
         BigDecimal finalCost,
         String debtorName,
         Long portfolioId,
-        Long bankId
+        Long bankId,
+        Integer daysToDiscount
 ) {
 }

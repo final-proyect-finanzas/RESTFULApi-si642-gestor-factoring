@@ -17,7 +17,8 @@ public class CreateBillCommandFromResourceAssembler {
                 resource.portfolioId(),
                 resource.bankId(),
                 resource.initialCost(),
-                resource.finalCost()
+                resource.finalCost(),
+                resource.daysToDiscount()
         );
     }
 }

@@ -18,6 +18,7 @@ public record CreateBillCommand(
         Long portfolioId,
         Long bankId,
         BigDecimal initialCosts,
-        BigDecimal finalCosts
+        BigDecimal finalCosts,
+        Integer daysToDiscount
 ) {
 }

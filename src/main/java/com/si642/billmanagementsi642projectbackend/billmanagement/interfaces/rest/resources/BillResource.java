@@ -18,6 +18,7 @@ public record BillResource(
         BigDecimal netValue,
         Bank bank,
         String debtorName,
-        String companyName
+        String companyName,
+        Integer daysToDiscount
 ) {
 }

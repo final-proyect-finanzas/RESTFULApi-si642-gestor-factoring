@@ -3,7 +3,6 @@ import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.c
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Bank;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Debtor;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.Currency;
-import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.TypeRate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -84,8 +83,25 @@ public class Bill {
     private Bank bank;
 
     @ManyToOne
+    @JoinColumn(name = "wallet_id")
+    private Wallet wallet;
+
+    @ManyToOne
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
+
+    @Column(nullable = false)
+    private Boolean isDiscounted = false;
+
+    private BigDecimal amountReceived = BigDecimal.ZERO;
+
+    private BigDecimal amountDelivered = BigDecimal.ZERO;
+
+    private Integer daysToDiscount = 0;
+
+    private BigDecimal TCEA = BigDecimal.ZERO;
+
+
 
     public Bill(CreateBillCommand command, Debtor debtor, Portfolio portfolio, Bank bank) {
         this.number = command.number();
@@ -100,21 +116,75 @@ public class Bill {
         this.initialCost = command.initialCosts();
         this.finalCost = command.finalCosts();
         this.calculateNetValue();
+        this.daysToDiscount = this.calculateDaysToDiscount();
     }
 
-    private void calculateNetValue() {
-        this.netValue = this.amount.subtract(this.initialCost).subtract(this.finalCost);
+    public int calculateDaysToDiscount() {
+        return (int) ((this.dueDate.getTime() - this.issueDate.getTime()) / (1000 * 60 * 60 * 24));
     }
 
     /**
-     * Calculate the discount rate "D%" = TE / (1 + TE)
+     * This method represents the discount of the bill
+     *
      */
-    private void calculateDrate() {
-        if(this.bank.getTypeRate() == TypeRate.TNA) {
-            this.netValue = this.netValue.multiply(BigDecimal.valueOf(this.bank.getRate()));
-        }else{
-            this.netValue = this.netValue.multiply(this.convertTNtoTE(BigDecimal.valueOf(this.bank.getRate())));
+    public void discount(){
+        this.isDiscounted = true;
+        this.amountReceived = this.netValue.subtract(this.initialCost);
+        this.amountDelivered = this.amount.add(this.finalCost);
+
+    }
+
+    /**
+     * This method represents the value of TCEA of this bill.
+     * TCEA = ((ValueDelivered / ValueReceived)^(360/daysToDiscount) - 1)*100
+     */
+    public void calculateTCEA() {
+        BigDecimal valueDelivered = this.amountDelivered;
+        BigDecimal valueReceived = this.amountReceived;
+        BigDecimal daysToDiscount = BigDecimal.valueOf(this.daysToDiscount);
+        BigDecimal TCEA = valueDelivered.divide(valueReceived, 10, BigDecimal.ROUND_HALF_UP)
+                .pow( BigDecimal.valueOf(360).divide(daysToDiscount, 10, BigDecimal.ROUND_HALF_UP).intValue())
+                .subtract(BigDecimal.ONE)
+                .multiply(BigDecimal.valueOf(100));
+        this.TCEA = TCEA;
+    }
+
+    /**
+     * Calculate the net value of the bill
+     * Net value = amount * ( 1 - D%)
+     */
+    public void calculateNetValue() {
+        String typeRatePrefix = this.bank.getTypeRate().name().substring(0, 2);
+        if(typeRatePrefix.equals("TE")) {
+            this.calculateNetValueTE();
+        } else {
+            this.calculateNetValueTNA();    
         }
+    }
+
+    public void calculateNetValueTE() {
+        BigDecimal D = this.convertTEtoD(BigDecimal.valueOf(this.bank.getRate()));
+        this.netValue = this.amount.multiply(BigDecimal.ONE.subtract(D.divide(BigDecimal.valueOf(100))));
+    }
+
+
+    public void calculateNetValueTNA() {
+        BigDecimal TE = this.convertTNtoTE(BigDecimal.valueOf(this.bank.getRate()));
+        BigDecimal D = this.convertTEtoD(TE);
+        this.netValue = this.amount.multiply(BigDecimal.ONE.subtract(D.divide(BigDecimal.valueOf(100))));
+    }
+
+
+
+    /**
+     * Calculate the discount rate "D%" = TE / (1 + TE)
+     * The input is the TE rate
+     * Return the D rate
+     */
+    public BigDecimal convertTEtoD(BigDecimal TE) {
+        double rate = TE.doubleValue() / 100;
+        double result = rate / (1 + rate);
+        return BigDecimal.valueOf(result * 100);
     }
 
     /**
@@ -134,9 +204,6 @@ public class Bill {
         double result = Math.pow(1 + rate / period, period) - 1;
         return BigDecimal.valueOf(result * 100);
     }
-
-
-
 
 
 }
