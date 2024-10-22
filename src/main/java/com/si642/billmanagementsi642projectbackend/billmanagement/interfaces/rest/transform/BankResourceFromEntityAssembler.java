@@ -11,7 +11,10 @@ public class BankResourceFromEntityAssembler {
                 bank.getRate(),
                 bank.getTypeRate().toString(),
                 bank.getDaysRate(),
-                bank.getCapitalization().name()
+                bank.getCapitalization().name(),
+                bank.getInitialCostPerDocument(),
+                bank.getInitialPortes(),
+                bank.getFinalCommission()
         );
     }
 }
