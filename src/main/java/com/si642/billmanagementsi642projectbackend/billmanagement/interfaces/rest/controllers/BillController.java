@@ -37,9 +37,9 @@ public class BillController {
         return ResponseEntity.ok(billResource);
     }
 
-    @GetMapping("/getByPortfolioId/{portfolioId}")
-    ResponseEntity<List<BillResource>> getBillsByPortfolioId(@PathVariable Long portfolioId) {
-        var bills = billQueryService.handle(new GetBillsByCompanyId(portfolioId));
+    @GetMapping("/getByCompanyId/{companyId}")
+    ResponseEntity<List<BillResource>> getBillsByPortfolioId(@PathVariable Long companyId) {
+        var bills = billQueryService.handle(new GetBillsByCompanyId(companyId));
         if (bills.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

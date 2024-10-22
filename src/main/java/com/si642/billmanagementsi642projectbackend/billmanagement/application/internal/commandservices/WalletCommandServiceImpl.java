@@ -3,7 +3,9 @@ package com.si642.billmanagementsi642projectbackend.billmanagement.application.i
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates.Wallet;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.AddBillToWalletCommand;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateWalletCommand;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.DiscountWalletCommand;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.UpdateWalletCommand;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BankQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BillQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.CompanyQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.WalletCommandService;
@@ -18,11 +20,13 @@ public class WalletCommandServiceImpl implements WalletCommandService {
     private final WalletRepository walletRepository;
     private final CompanyQueryService companyQueryService;
     private final BillRepository billRepository;
+    private final BankQueryService bankQueryService;
 
-    public WalletCommandServiceImpl(WalletRepository walletRepository, CompanyQueryService companyQueryService, BillQueryService billQueryService, BillRepository billRepository) {
+    public WalletCommandServiceImpl(WalletRepository walletRepository, CompanyQueryService companyQueryService, BillQueryService billQueryService, BillRepository billRepository, BankQueryService bankQueryService) {
         this.walletRepository = walletRepository;
         this.companyQueryService = companyQueryService;
         this.billRepository = billRepository;
+        this.bankQueryService = bankQueryService;
     }
     @Override
     public Optional<Wallet> handle(CreateWalletCommand command) {
@@ -63,7 +67,7 @@ public class WalletCommandServiceImpl implements WalletCommandService {
             throw new IllegalArgumentException("Wallet or Bill not found");
         }
         var wallet = walletOptional.get();
-        wallet.AddBill(billOptional.get());
+        wallet.addBill(billOptional.get());
         try {
             walletRepository.save(wallet);
         } catch (Exception e) {
@@ -71,4 +75,27 @@ public class WalletCommandServiceImpl implements WalletCommandService {
         }
         return Optional.of(wallet.getId());
     }
+
+    @Override
+    public Optional<Wallet> handle(DiscountWalletCommand command) {
+        var walletOptional = walletRepository.findById(command.walletId());
+        if (walletOptional.isEmpty()) {
+            throw new IllegalArgumentException("Wallet not found");
+        }
+        var bankOptional = bankQueryService.findById(command.bankId());
+        if (bankOptional.isEmpty()) {
+            throw new IllegalArgumentException("Bank not found");
+        }
+        var wallet = walletOptional.get();
+        wallet.setBank(bankOptional.get());
+        wallet.discount();
+        try {
+            walletRepository.save(wallet);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+        return Optional.of(wallet);
+    }
+
+
 }
