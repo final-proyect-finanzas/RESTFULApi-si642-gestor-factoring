@@ -10,15 +10,9 @@ public record BillResource(
         String number,
         Date issueDate,
         Date dueDate,
-        Date discountDate,
         BigDecimal amount,
         String currency,
-        BigDecimal initialCost,
-        BigDecimal finalCost,
-        BigDecimal netValue,
-        Bank bank,
         String debtorName,
-        String companyName,
-        Integer daysToDiscount
+        String companyName
 ) {
 }

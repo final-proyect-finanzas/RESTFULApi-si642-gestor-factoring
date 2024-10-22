@@ -7,14 +7,9 @@ public record CreateBillResource(
         String number,
         Date issueDate,
         Date dueDate,
-        Date discountDate,
         BigDecimal amount,
         String currency,
-        BigDecimal initialCost,
-        BigDecimal finalCost,
         String debtorName,
-        Long portfolioId,
-        Long bankId,
-        Integer daysToDiscount
+        Long companyId
 ) {
 }

@@ -1,6 +1,6 @@
 package com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.controllers;
 
-import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.queries.GetBillsByPortfolioId;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.queries.GetBillsByCompanyId;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BillCommandService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.BillQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.resources.BillResource;
@@ -39,7 +39,7 @@ public class BillController {
 
     @GetMapping("/getByPortfolioId/{portfolioId}")
     ResponseEntity<List<BillResource>> getBillsByPortfolioId(@PathVariable Long portfolioId) {
-        var bills = billQueryService.handle(new GetBillsByPortfolioId(portfolioId));
+        var bills = billQueryService.handle(new GetBillsByCompanyId(portfolioId));
         if (bills.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

@@ -1,5 +1,6 @@
 package com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities;
 
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates.Bill;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates.Wallet;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateCompanyCommand;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.Profile;
@@ -25,6 +26,9 @@ public class Company {
 
     @Embedded
     private UserId userId;
+
+    @OneToMany(mappedBy = "company")
+    private List<Bill> bills;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wallet> wallets;

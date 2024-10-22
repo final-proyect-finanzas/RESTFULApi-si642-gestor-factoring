@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Long> {
     boolean existsByNumber (String number);
-    Optional<List<Bill>> findBillsByPortfolioId (Long portfolioId);
+    Optional<List<Bill>> findBillsByCompanyId(Long companyId);
 }

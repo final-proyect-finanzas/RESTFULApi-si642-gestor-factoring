@@ -10,16 +10,10 @@ public class BillResourceFromEntityAssembler {
                 bill.getNumber(),
                 bill.getIssueDate(),
                 bill.getDueDate(),
-                bill.getDiscountDate(),
                 bill.getAmount(),
                 bill.getCurrency().toString(),
-                bill.getInitialCost(),
-                bill.getFinalCost(),
-                bill.getNetValue(),
-                bill.getBank(),
                 bill.getDebtor().getProfile().getName(),
-                bill.getPortfolio().getCompany().getProfile().getName(),
-                bill.getDaysToDiscount()
+                bill.getCompany().getProfile().getName()
         );
     }
 }
