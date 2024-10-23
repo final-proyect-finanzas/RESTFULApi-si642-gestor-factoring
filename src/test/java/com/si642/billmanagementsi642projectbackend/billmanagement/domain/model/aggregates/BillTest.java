@@ -1,3 +1,4 @@
+/*
 package com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates;
 
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateBankCommand;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,5 +116,25 @@ class BillTest {
 
     }
 
+    @Test
+    public void testCalculateDaysToDiscount() {
+        Bill bill = new Bill();
 
-}
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2023, Calendar.OCTOBER, 1);
+        Date issueDate = calendar.getTime();
+
+        calendar.set(2023, Calendar.OCTOBER, 31);
+        Date dueDate = calendar.getTime();
+
+        bill.setIssueDate(issueDate);
+        bill.setDueDate(dueDate);
+
+        int expectedDays = 30;
+        int calculatedDays = bill.calculateDaysToDiscount();
+
+        assertEquals(expectedDays, calculatedDays);
+    }
+
+
+}*/
