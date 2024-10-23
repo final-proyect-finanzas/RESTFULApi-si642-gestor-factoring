@@ -15,7 +15,7 @@ public class WalletResourceFromEntityAssembler {
                         .orElse(Collections.emptyList())
                         .stream()
                         .map(BillResourceFromEntityAssembler::toResourceFromEntity)
-                        .toList());
+                        .toList(), wallet.getIsDiscounted());
     }
 
     public static WalletDiscountedResource toDiscountedResourceFromEntity(Wallet wallet) {

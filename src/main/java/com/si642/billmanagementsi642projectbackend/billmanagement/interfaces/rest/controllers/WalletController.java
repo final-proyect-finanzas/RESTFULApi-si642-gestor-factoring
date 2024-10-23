@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "api/v1/wallets", produces = "application/json")
 @Tag(name = "Wallets", description = "Wallet Management Endpoints")
@@ -77,6 +79,19 @@ public class WalletController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(WalletResourceFromEntityAssembler.toDiscountedResourceFromEntity(wallet.get()));
+    }
+
+    //Get all wallets by companyId
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<List<WalletResource>> getWalletsByCompanyId(@PathVariable Long companyId) {
+        var wallets = walletQueryService.findAllByCompanyId(companyId);
+        if (wallets.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var result = wallets.get().stream().map(WalletResourceFromEntityAssembler::toResourceFromEntity).toList();
+
+        return ResponseEntity.ok(result);
     }
 
 

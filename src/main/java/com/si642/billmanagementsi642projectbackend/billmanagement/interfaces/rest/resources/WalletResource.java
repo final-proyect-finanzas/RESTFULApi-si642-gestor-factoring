@@ -5,6 +5,7 @@ import java.util.List;
 public record WalletResource(
         Long id,
         Long companyId,
-        List<BillResource> bills
+        List<BillResource> bills,
+        Boolean isDiscounted
 ) {
 }
