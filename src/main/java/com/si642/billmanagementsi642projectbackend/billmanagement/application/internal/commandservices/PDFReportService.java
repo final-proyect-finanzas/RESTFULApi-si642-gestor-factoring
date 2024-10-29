@@ -4,8 +4,10 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -64,6 +66,9 @@ public class PDFReportService {
             });
 
             document.add(table);
+            document.add(new Paragraph("Report by: Gestify - 2024").setFont(
+                    boldFont).setFontSize(15)
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }
