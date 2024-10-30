@@ -52,8 +52,8 @@ public class WalletController {
     }
 
 
-    @PutMapping("/{walletId}/bills")
-    public ResponseEntity<Long> addBillToWallet(@PathVariable Long walletId, @RequestBody Long billId) {
+    @PutMapping("/{walletId}/bill/{billId}")
+    public ResponseEntity<Long> addBillToWallet(@PathVariable Long walletId, @PathVariable Long billId) {
         var command = new AddBillToWalletCommand(walletId, billId);
         var bill = walletCommandService.handle(command);
         if (bill.isEmpty()) {
@@ -71,9 +71,9 @@ public class WalletController {
         return ResponseEntity.ok(WalletResourceFromEntityAssembler.toResourceFromEntity(wallet.get()));
     }
 
-    @PutMapping("/discount/{walletId}")
-    public ResponseEntity<WalletDiscountedResource> discountWallet(@PathVariable Long walletId, @RequestBody DiscountWalletCommand command) {
-        var commandDiscount = new DiscountWalletCommand(walletId, command.bankId());
+    @PutMapping("/discount/{walletId}/bank/{bankId}")
+    public ResponseEntity<WalletDiscountedResource> discountWallet(@PathVariable Long walletId, @PathVariable Long bankId) {
+        var commandDiscount = new DiscountWalletCommand(walletId, bankId);
         var wallet = walletCommandService.handle(commandDiscount);
         if (wallet.isEmpty()) {
             return ResponseEntity.badRequest().build();

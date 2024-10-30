@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/v1/banks", produces = "application/json")
@@ -39,5 +38,17 @@ public class BankController {
         }
         var bankResource = BankResourceFromEntityAssembler.toResourceFromEntity(bank.get());
         return ResponseEntity.ok(bankResource);
+    }
+
+    @GetMapping
+    ResponseEntity<List<BankResource>> getBanks() {
+        var banks = bankQueryService.findAll();
+        if (banks.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var banksResponse = banks.get().stream()
+                .map(BankResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(banksResponse);
     }
 }
