@@ -1,17 +1,13 @@
 package com.si642.billmanagementsi642projectbackend.billmanagement.application.internal.commandservices;
 
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates.Bill;
-import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.aggregates.Portfolio;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateBillCommand;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateDebtorCommand;
-import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Bank;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Company;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Debtor;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.queries.GetDebtorByName;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.*;
 import com.si642.billmanagementsi642projectbackend.billmanagement.infrastructure.persistence.jpa.repositories.BillRepository;
-import com.si642.billmanagementsi642projectbackend.billmanagement.infrastructure.persistence.jpa.repositories.CompanyRepository;
-import com.si642.billmanagementsi642projectbackend.billmanagement.infrastructure.persistence.jpa.repositories.DebtorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +18,13 @@ public class BillCommandServiceImpl implements BillCommandService {
 
     private final BillRepository billRepository;
     private final DebtorCommandService debtorCommandService;
-    private final BankQueryService bankQueryService;
-    private final PortfolioQueryService portfolioQueryService;
     private final CompanyQueryService companyQueryService;
     private final DebtorQueryService debtorQueryService;
 
     public BillCommandServiceImpl(BillRepository billRepository, DebtorCommandService debtorCommandService,
-                                  BankQueryService bankQueryService, PortfolioQueryService portfolioQueryService,
                                   CompanyQueryService companyQueryService, DebtorQueryService debtorQueryService) {
         this.billRepository = billRepository;
         this.debtorCommandService = debtorCommandService;
-        this.bankQueryService = bankQueryService;
-        this.portfolioQueryService = portfolioQueryService;
         this.companyQueryService = companyQueryService;
         this.debtorQueryService = debtorQueryService;
     }
@@ -44,12 +35,11 @@ public class BillCommandServiceImpl implements BillCommandService {
         validateBillDoesNotExist(command.number());
 
         Optional<Debtor> debtor = findOrCreateDebtor(command.debtorName());
-        Optional<Bank> bank = bankQueryService.findById(command.bankId());
-        Optional<Portfolio> portfolio = portfolioQueryService.findById(command.portfolioId());
+        Optional<Company> company = companyQueryService.findById(command.companyId());
 
-        validateEntitiesExist(debtor, bank, portfolio);
+            validateEntitiesExist(debtor, company);
 
-        Bill bill = new Bill(command, debtor.get(), portfolio.get(), bank.get());
+        Bill bill = new Bill(command, debtor.get(), company.get());
         return saveBill(bill);
     }
 
@@ -64,9 +54,9 @@ public class BillCommandServiceImpl implements BillCommandService {
                 .or(() -> debtorCommandService.handle(new CreateDebtorCommand(debtorName, "", "", "")));
     }
 
-    private void validateEntitiesExist(Optional<Debtor> debtor, Optional<Bank> bank, Optional<Portfolio> portfolio) {
-        if (debtor.isEmpty() || bank.isEmpty() || portfolio.isEmpty()) {
-            throw new IllegalArgumentException("Debtor, Bank, or Portfolio not found");
+    private void validateEntitiesExist(Optional<Debtor> debtor,Optional<Company> company) {
+        if (debtor.isEmpty() || company.isEmpty()) {
+            throw new IllegalArgumentException("Debtor does not exist");
         }
     }
 

@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface CompanyQueryService {
     Optional<Company> findById(Long id);
+
+    Optional<Company> findByUserId(Long userId);
 }

@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * Represents a bank
  * This class represents the bank to discount the bill
@@ -43,12 +45,21 @@ public class Bank {
 
     private Capitalization capitalization;
 
+    private BigDecimal initialCostPerDocument;
+
+    private BigDecimal initialPortes;
+
+    private BigDecimal finalCommission;
+
     public Bank(CreateBankCommand command) {
         this.name = command.name();
         this.rate = command.rate();
         this.typeRate = command.typeRate();
         this.daysRate = command.daysRate();
         this.capitalization = command.capitalization();
+        this.initialCostPerDocument = command.initialCostPerDocument();
+        this.initialPortes = command.initialPortes();
+        this.finalCommission = command.finalCommission();
     }
 
 }

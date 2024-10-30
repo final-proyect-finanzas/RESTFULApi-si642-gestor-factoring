@@ -10,14 +10,10 @@ public class CreateBillCommandFromResourceAssembler {
                 resource.number(),
                 resource.issueDate(),
                 resource.dueDate(),
-                resource.discountDate(),
                 resource.amount(),
                 Currency.valueOf(resource.currency()),
                 resource.debtorName(),
-                resource.portfolioId(),
-                resource.bankId(),
-                resource.initialCost(),
-                resource.finalCost()
+                resource.companyId()
         );
     }
 }

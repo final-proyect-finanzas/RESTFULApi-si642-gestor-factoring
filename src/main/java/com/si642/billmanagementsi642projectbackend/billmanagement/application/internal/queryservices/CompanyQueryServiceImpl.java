@@ -1,6 +1,7 @@
 package com.si642.billmanagementsi642projectbackend.billmanagement.application.internal.queryservices;
 
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Company;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.UserId;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.services.CompanyQueryService;
 import com.si642.billmanagementsi642projectbackend.billmanagement.infrastructure.persistence.jpa.repositories.CompanyRepository;
 import org.springframework.stereotype.Service;
@@ -20,4 +21,12 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     public Optional<Company> findById(Long id) {
         return companyRepository.findById(id);
     }
+
+    @Override
+    public Optional<Company> findByUserId(Long userId) {
+        var id = new UserId(userId);
+        return companyRepository.findByUserId(id);
+    }
+
+
 }

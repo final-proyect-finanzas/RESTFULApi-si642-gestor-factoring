@@ -8,10 +8,7 @@ import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.res
 import com.si642.billmanagementsi642projectbackend.billmanagement.interfaces.rest.transform.CreateCompanyCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "api/v1/companies", produces = "application/json")
@@ -35,6 +32,19 @@ public class CompanyController {
         var company = companyQueryService.findById(companyId);
         if (company.isEmpty()){
             return ResponseEntity.badRequest().build();
+        }
+        var companyResource = CompanyResourceFromEntityAssembler.toResourceFromEntity(company.get());
+        return ResponseEntity.ok(companyResource);
+    }
+
+    /**
+     * Method to get companyId by UserId
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CompanyResource> getCompanyByUserId(@PathVariable Long userId){
+        var company = companyQueryService.findByUserId(userId);
+        if (company.isEmpty()){
+            return ResponseEntity.notFound().build();
         }
         var companyResource = CompanyResourceFromEntityAssembler.toResourceFromEntity(company.get());
         return ResponseEntity.ok(companyResource);
