@@ -18,6 +18,12 @@ public class Debtor {
     @Embedded
     private Profile profile;
 
+    /**
+     * The document identifier is a unique identifier that is used to identify the debtor.
+     * For example at Peru the document identifier is the DNI, RUC, etc.
+     */
+    private String documentIdentifier; 
+
     public Debtor(String name, String address, String email, String phone) {
         this.profile = new Profile(name, address, email, phone);
     }
@@ -27,10 +33,11 @@ public class Debtor {
     }
 
     /**
-     * Constructor that is used when is created a Bill and gives only the name.
+     * Constructor that is used when is created a Bill and gives only the name and the document identifier.
      */
-    public Debtor (String name) {
+    public Debtor (String name, String documentIdentifier){ {
         this.profile = new Profile(name, "", "", "");
+        this.documentIdentifier = documentIdentifier;
     }
 
     public Debtor(CreateDebtorCommand command){

@@ -10,6 +10,7 @@ public record CreateBillResource(
         BigDecimal amount,
         String currency,
         String debtorName,
-        Long companyId
+        Long companyId,
+        String documentIdentifierDebtor
 ) {
 }
