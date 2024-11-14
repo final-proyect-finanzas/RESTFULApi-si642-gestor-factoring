@@ -13,7 +13,8 @@ public class CreateBillCommandFromResourceAssembler {
                 resource.amount(),
                 Currency.valueOf(resource.currency()),
                 resource.debtorName(),
-                resource.companyId()
+                resource.companyId(),
+                resource.documentIdentifierDebtor()
         );
     }
 }

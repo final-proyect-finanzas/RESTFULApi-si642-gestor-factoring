@@ -12,6 +12,7 @@ public record CreateBillCommand(
         BigDecimal amount,
         Currency currency,
         String debtorName,
-        Long companyId
+        Long companyId,
+        String documentIdentifierDebtor
 ) {
 }

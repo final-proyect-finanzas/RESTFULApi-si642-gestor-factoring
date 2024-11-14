@@ -34,7 +34,7 @@ public class BillCommandServiceImpl implements BillCommandService {
     public Optional<Bill> handle(CreateBillCommand command) {
         validateBillDoesNotExist(command.number());
 
-        Optional<Debtor> debtor = findOrCreateDebtor(command.debtorName());
+        Optional<Debtor> debtor = findOrCreateDebtor(command.debtorName(), command.documentIdentifierDebtor());
         Optional<Company> company = companyQueryService.findById(command.companyId());
 
             validateEntitiesExist(debtor, company);
@@ -49,9 +49,9 @@ public class BillCommandServiceImpl implements BillCommandService {
         }
     }
 
-    private Optional<Debtor> findOrCreateDebtor(String debtorName) {
+    private Optional<Debtor> findOrCreateDebtor(String debtorName, String documentIdentifier) {
         return debtorQueryService.handle(new GetDebtorByName(debtorName))
-                .or(() -> debtorCommandService.handle(new CreateDebtorCommand(debtorName, "", "", "")));
+                .or(() -> debtorCommandService.handle(new CreateDebtorCommand(debtorName, "", "", "", documentIdentifier)));
     }
 
     private void validateEntitiesExist(Optional<Debtor> debtor,Optional<Company> company) {
