@@ -6,6 +6,8 @@ public record WalletResource(
         Long id,
         Long companyId,
         List<BillResource> bills,
-        Boolean isDiscounted
+        Boolean isDiscounted,
+        String bankName,
+        String currency
 ) {
 }

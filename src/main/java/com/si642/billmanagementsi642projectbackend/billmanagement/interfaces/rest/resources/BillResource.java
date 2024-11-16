@@ -13,6 +13,7 @@ public record BillResource(
         BigDecimal amount,
         String currency,
         String debtorName,
-        String companyName
+        String companyName,
+        String debtorDocumentIdentifier
 ) {
 }

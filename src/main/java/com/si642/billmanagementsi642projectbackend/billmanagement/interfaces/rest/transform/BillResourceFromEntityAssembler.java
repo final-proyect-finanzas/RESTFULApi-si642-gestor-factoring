@@ -13,7 +13,8 @@ public class BillResourceFromEntityAssembler {
                 bill.getAmount(),
                 bill.getCurrency().toString(),
                 bill.getDebtor().getProfile().getName(),
-                bill.getCompany().getProfile().getName()
+                bill.getCompany().getProfile().getName(),
+                bill.getDebtor().getDocumentIdentifier()
         );
     }
 }

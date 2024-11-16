@@ -4,6 +4,7 @@ import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.c
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Bank;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Company;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.Capitalization;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.Currency;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.TypeRate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class WalletTest {
         bills.add(bill1);
         bills.add(bill2);
 
-        CreateWalletCommand command = new CreateWalletCommand(1L, new Date(2025, Calendar.JANUARY, 1));
+        CreateWalletCommand command = new CreateWalletCommand(1L, new Date(2025, Calendar.JANUARY, 1), Currency.PEN);
         wallet = new Wallet(command, company);
         wallet.setBank(bank);
         wallet.setBills(bills);

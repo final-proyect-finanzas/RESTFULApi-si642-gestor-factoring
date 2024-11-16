@@ -4,6 +4,7 @@ import java.util.Date;
 
 public record CreateWalletResource(
         Long companyId,
-        Date discountDate
+        Date discountDate,
+        String currency
 ) {
 }

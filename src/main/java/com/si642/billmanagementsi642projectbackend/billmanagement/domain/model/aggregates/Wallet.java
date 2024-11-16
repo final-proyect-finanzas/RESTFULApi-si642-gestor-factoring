@@ -3,6 +3,7 @@ package com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.commands.CreateWalletCommand;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Bank;
 import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.entities.Company;
+import com.si642.billmanagementsi642projectbackend.billmanagement.domain.model.valueobjects.Currency;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class Wallet {
     private BigDecimal initialCost;
     private BigDecimal finalCost;
 
+    @Column(nullable = false)
+    private Currency currency;
+
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
@@ -50,6 +54,7 @@ public class Wallet {
 
     public Wallet(CreateWalletCommand command, Company company) {
         this.discountDate = command.discountDate();
+        this.currency = command.currency();
         this.company = company;
     }
 
