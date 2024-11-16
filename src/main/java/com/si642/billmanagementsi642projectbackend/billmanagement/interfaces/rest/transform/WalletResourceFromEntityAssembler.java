@@ -10,12 +10,18 @@ import java.util.Optional;
 
 public class WalletResourceFromEntityAssembler {
     public static WalletResource toResourceFromEntity(Wallet wallet) {
-        return new WalletResource(wallet.getId(), wallet.getCompany().getId(),
+        return new WalletResource(wallet.getId(),
+                wallet.getCompany().getId(),
                 Optional.ofNullable(wallet.getBills())
                         .orElse(Collections.emptyList())
                         .stream()
                         .map(BillResourceFromEntityAssembler::toResourceFromEntity)
-                        .toList(), wallet.getIsDiscounted());
+                        .toList(), wallet.getIsDiscounted(),
+                Optional.ofNullable(wallet.getBank())
+                        .map(bank -> bank.getName())
+                        .orElse(null),
+                wallet.getCurrency().name()
+        );
     }
 
     public static WalletDiscountedResource toDiscountedResourceFromEntity(Wallet wallet) {

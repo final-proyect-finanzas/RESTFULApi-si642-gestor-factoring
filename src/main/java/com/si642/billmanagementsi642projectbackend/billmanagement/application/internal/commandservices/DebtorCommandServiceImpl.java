@@ -23,7 +23,7 @@ public class DebtorCommandServiceImpl implements DebtorCommandService {
         if (debtorRepository.existsByProfileName(command.name())) {
             throw new IllegalArgumentException("Debtor with name " + command.name() + " already exists");
         }
-        var debtor = new Debtor(command.name());
+        var debtor = new Debtor(command.name(), command.documentIdentifier());
         try {
             return Optional.of(debtorRepository.save(debtor));
         } catch (Exception e) {

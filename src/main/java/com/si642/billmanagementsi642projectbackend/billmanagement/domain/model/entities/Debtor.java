@@ -35,12 +35,12 @@ public class Debtor {
     /**
      * Constructor that is used when is created a Bill and gives only the name and the document identifier.
      */
-    public Debtor (String name, String documentIdentifier){ {
+    public Debtor (String name, String documentIdentifier){
         this.profile = new Profile(name, "", "", "");
         this.documentIdentifier = documentIdentifier;
     }
 
-    public Debtor(CreateDebtorCommand command){
+    public Debtor(CreateDebtorCommand command) {
         this.profile = new Profile(command.name(), command.address(), command.email(), command.phone());
     }
 }
