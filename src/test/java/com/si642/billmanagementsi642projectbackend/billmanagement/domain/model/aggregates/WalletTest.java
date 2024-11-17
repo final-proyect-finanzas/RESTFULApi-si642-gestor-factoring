@@ -182,4 +182,40 @@ class WalletTest {
         wallet.calculateAmountReceived();
         assertEquals(BigDecimal.valueOf(250), wallet.getAmountReceived());
     }
+
+        @Test
+        void convertTEtoTEDaysToDiscount() {
+            BigDecimal TE = BigDecimal.valueOf(20);
+            wallet.setDaysToDiscount(30);
+            BigDecimal result = wallet.convertTEtoTEDaysToDiscount(TE);
+            assertNotNull(result);
+            assertTrue(result.compareTo(BigDecimal.ZERO) > 0);
+        }
+
+    @Test
+    void convertTEtoTEDaysToDiscount_zeroDays() {
+        BigDecimal TE = BigDecimal.valueOf(20);
+        wallet.setDaysToDiscount(0);
+        BigDecimal result = wallet.convertTEtoTEDaysToDiscount(TE);
+        assertNotNull(result);
+        assertEquals(BigDecimal.valueOf(0.0), result);
+    }
+
+    @Test
+    void convertTEtoTEDaysToDiscount_negativeTE() {
+        BigDecimal TE = BigDecimal.valueOf(-5);
+        wallet.setDaysToDiscount(30);
+        BigDecimal result = wallet.convertTEtoTEDaysToDiscount(TE);
+        assertNotNull(result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) < 0);
+    }
+
+    @Test
+    void convertTEtoTEDaysToDiscount_largeTE() {
+        BigDecimal TE = BigDecimal.valueOf(1000);
+        wallet.setDaysToDiscount(30);
+        BigDecimal result = wallet.convertTEtoTEDaysToDiscount(TE);
+        assertNotNull(result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) > 0);
+    }
 }

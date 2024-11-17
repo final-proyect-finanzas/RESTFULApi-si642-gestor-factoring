@@ -59,7 +59,8 @@ public class Wallet {
     }
 
     public int calculateDaysToDiscount() {
-        long diff = this.discountDate.getTime() - new Date().getTime();
+        //long diff = this.discountDate.getTime() - new Date().getTime();
+        long diff = this.bills.getFirst().getDueDate().getTime() - this.discountDate.getTime();
         this.daysToDiscount = (int) Math.ceil(diff / (1000.0 * 60 * 60 * 24));
         return (int) Math.ceil(diff / (1000.0 * 60 * 60 * 24));
     }
@@ -102,7 +103,6 @@ public class Wallet {
         this.finalCost = bank.getFinalCommission();
     }
 
-
     public void calculateTotalAmountOfBills() {
         BigDecimal totalAmount = BigDecimal.ZERO;
         if (this.bills != null) {
@@ -121,11 +121,17 @@ public class Wallet {
         BigDecimal valueDelivered = this.amountDelivered;
         BigDecimal valueReceived = this.amountReceived;
         BigDecimal daysRate = BigDecimal.valueOf(bank.getDaysRate());
-        BigDecimal exponent = BigDecimal.valueOf(360).divide(daysRate, 10, BigDecimal.ROUND_HALF_UP);
-        BigDecimal TCEA = valueDelivered.divide(valueReceived, 10, BigDecimal.ROUND_HALF_UP)
-                .pow(exponent.intValue())
-                .subtract(BigDecimal.ONE)
-                .multiply(BigDecimal.valueOf(100));
+        // Calculamos el exponente como un BigDecimal
+        BigDecimal exponent = BigDecimal.valueOf(360).divide(BigDecimal.valueOf(this.daysToDiscount), 10, BigDecimal.ROUND_HALF_UP);
+
+        // Realizamos el cálculo usando Math.pow para manejar exponentes decimales
+        double ratio = valueDelivered.doubleValue() / valueReceived.doubleValue();
+        double result = Math.pow(ratio, exponent.doubleValue());
+
+        // Calculamos la TCEA
+        BigDecimal TCEA = BigDecimal.valueOf(result).subtract(BigDecimal.ONE).multiply(BigDecimal.valueOf(100));
+
+        // Asignamos el valor calculado a this.TCEA
         this.TCEA = TCEA;
     }
 
@@ -139,13 +145,15 @@ public class Wallet {
     }
 
     public void calculateNetValueTE() {
-        BigDecimal D = this.convertTEtoD(BigDecimal.valueOf(this.bank.getRate()));
+        BigDecimal TEDaysToDiscount = this.convertTEtoTEDaysToDiscount(BigDecimal.valueOf(this.bank.getRate()));
+        BigDecimal D = this.convertTEtoD(TEDaysToDiscount);
         this.netValue = this.totalAmountOfBills.multiply(BigDecimal.ONE.subtract(D.divide(BigDecimal.valueOf(100))));
     }
 
     public void calculateNetValueTN() {
         BigDecimal TE = this.convertTNtoTE(BigDecimal.valueOf(this.bank.getRate()));
-        BigDecimal D = this.convertTEtoD(TE);
+        BigDecimal TEDaysToDiscount = this.convertTEtoTEDaysToDiscount(TE);
+        BigDecimal D = this.convertTEtoD(TEDaysToDiscount);
         this.netValue = this.totalAmountOfBills.multiply(BigDecimal.ONE.subtract(D.divide(BigDecimal.valueOf(100))));
     }
 
@@ -159,6 +167,19 @@ public class Wallet {
         double rate = TN.doubleValue() / 100;
         int period = this.bank.getCapitalization().getPeriod();
         double result = Math.pow(1 + rate / period, period) - 1;
+        return BigDecimal.valueOf(result * 100);
+    }
+
+    /**
+     *  Convert TE to TE Days to Discount
+     *  TEDaysToD = (1 + TE)^(daysToDiscount/360) - 1 * 100
+     * @param TE
+     * @return
+     */
+    public BigDecimal convertTEtoTEDaysToDiscount(BigDecimal TE) {
+        double rate = TE.doubleValue() / 100;
+        double days = this.daysToDiscount;
+        double result = Math.pow(1 + rate, days / this.bank.getDaysRate()) - 1;
         return BigDecimal.valueOf(result * 100);
     }
 
