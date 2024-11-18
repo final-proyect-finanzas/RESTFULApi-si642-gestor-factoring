@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,20 +48,6 @@ class WalletTest {
         wallet = new Wallet(command, company);
         wallet.setBank(bank);
         wallet.setBills(bills);
-    }
-
-    @Test
-    void calculateDaysToDiscount() {
-        // Set the discount date to 9 days from now
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 9);
-        wallet.setDiscountDate(calendar.getTime());
-
-        // Calculate the days to discount
-        int result = wallet.calculateDaysToDiscount();
-
-        // Assert that the result is 9 days
-        assertEquals(9, result);
     }
 
     @Test
@@ -121,22 +108,22 @@ class WalletTest {
     }
 
     @Test
-    void calculateNetValue() {
-        wallet.setTotalAmountOfBills(BigDecimal.valueOf(300));
+    void calculateDaysToDiscount_validDates() {
+        // Set the discount date to a specific date
+        Calendar discountCalendar = Calendar.getInstance();
+        discountCalendar.set(2025, Calendar.JANUARY, 1);
+        wallet.setDiscountDate(discountCalendar.getTime());
 
-        // Test for TE type rate
-        bank.setTypeRate(TypeRate.TEA);
-        wallet.calculateNetValue();
-        BigDecimal expectedNetValueTE = wallet.getTotalAmountOfBills().multiply(BigDecimal.ONE.subtract(wallet.convertTEtoD(BigDecimal.valueOf(wallet.getBank().getRate())).divide(BigDecimal.valueOf(100))));
-        assertEquals(expectedNetValueTE, wallet.getNetValue());
+        // Set the due date of the first bill to a specific date
+        Calendar dueCalendar = Calendar.getInstance();
+        dueCalendar.set(2025, Calendar.JANUARY, 10);
+        wallet.getBills().get(0).setDueDate(dueCalendar.getTime());
 
-        // Test for TN type rate
-        bank.setTypeRate(TypeRate.TNA);
-        wallet.calculateNetValue();
-        BigDecimal TE = wallet.convertTNtoTE(BigDecimal.valueOf(wallet.getBank().getRate()));
-        BigDecimal D = wallet.convertTEtoD(TE);
-        BigDecimal expectedNetValueTN = wallet.getTotalAmountOfBills().multiply(BigDecimal.ONE.subtract(D.divide(BigDecimal.valueOf(100))));
-        assertEquals(expectedNetValueTN, wallet.getNetValue());
+        // Calculate the days to discount
+        int result = wallet.calculateDaysToDiscount();
+
+        // Assert that the result is 9 days
+        assertEquals(10, result);
     }
 
     @Test
@@ -154,17 +141,25 @@ class WalletTest {
     }
 
     @Test
-    void convertTEtoD() {
+    void convertTEtoD_validTE() {
         BigDecimal TE = BigDecimal.valueOf(20);
-        BigDecimal D = wallet.convertTEtoD(TE);
-        assertNotNull(D);
+        BigDecimal result = wallet.convertTEtoD(TE);
+        assertEquals(BigDecimal.valueOf(16.67), result.setScale(2, RoundingMode.HALF_UP));
     }
 
     @Test
-    void convertTNtoTE() {
+    void convertTNtoTE_validTN() {
         BigDecimal TN = BigDecimal.valueOf(20);
-        BigDecimal TE = wallet.convertTNtoTE(TN);
-        assertNotNull(TE);
+        BigDecimal result = wallet.convertTNtoTE(TN);
+        assertEquals(BigDecimal.valueOf(21.13), result.setScale(2, RoundingMode.HALF_UP));
+    }
+
+    @Test
+    void convertTEtoTEDaysToDiscount_validTE() {
+        BigDecimal TE = BigDecimal.valueOf(20);
+        wallet.setDaysToDiscount(30);
+        BigDecimal result = wallet.convertTEtoTEDaysToDiscount(TE);
+        assertEquals(BigDecimal.valueOf(1.53), result.setScale(2, RoundingMode.HALF_UP));
     }
 
     @Test

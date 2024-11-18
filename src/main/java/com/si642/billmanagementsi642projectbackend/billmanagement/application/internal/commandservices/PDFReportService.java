@@ -85,6 +85,10 @@ public class PDFReportService {
             document.add(new Paragraph("Report by: Gestify - 2024").setFont(
                     boldFont).setFontSize(15)
             );
+            // Fecha de creación del reporte
+            document.add(new Paragraph("Fecha de creación: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date())).setFont(
+                    boldFont).setFontSize(15)
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }
